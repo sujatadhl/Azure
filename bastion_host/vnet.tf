@@ -13,6 +13,23 @@ resource "azurerm_public_ip" "public_ip" {
     sku = "Standard"
 }   
 
+#nsg
+resource "azurerm_network_security_group" "sujata_nsg" {
+    name                = "${var.name}-nsg"
+    location            = azurerm_resource_group.sujata_rg.location
+    resource_group_name = azurerm_resource_group.sujata_rg.name
+    security_rule {
+        name                       = "SSH"
+        priority                   = 1001
+        direction                  = "Inbound"
+        access                     = "Deny"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "3389"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+    }
+}
 #vnet
 resource "azurerm_virtual_network" "sujata_vnet" {   
     name                = "${var.name}-vnet"

@@ -1,4 +1,4 @@
-resource "azurerm_network_interface" "public_network_interface" {
+resource "azurerm_network_interface" "network_interface" {
     name = "${var.name}-nic-public"
     location = azurerm_resource_group.sujata_rg.location
     resource_group_name = azurerm_resource_group.sujata_rg.name
@@ -8,6 +8,11 @@ resource "azurerm_network_interface" "public_network_interface" {
       private_ip_address_allocation = "Dynamic"
     } 
 }
+resource "azurerm_network_interface_security_group_association" "nic_security-group_association" {
+  network_interface_id = azurerm_network_interface.network_interface.id
+  network_security_group_id = azurerm_network_security_group.sujata_nsg.id
+}
+
 
 #windows vm
 resource "azurerm_windows_virtual_machine" "windows_vm" {
@@ -17,7 +22,7 @@ resource "azurerm_windows_virtual_machine" "windows_vm" {
     size                = "Standard_F2"
     admin_username      = "adminuser"
     admin_password      = "Test#111"
-    network_interface_ids = [azurerm_network_interface.public_network_interface.id]
+    network_interface_ids = [azurerm_network_interface.network_interface.id]
 
     os_disk {
       caching = "ReadWrite"
